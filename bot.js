@@ -1,6 +1,6 @@
 const TelegramBot = require('node-telegram-bot-api');
 const Iota = require('@iota/core');
-const token = 'your token here';
+const token = 'your personal token here';
 
 const iota = Iota.composeAPI({
   provider: 'https://iotastrong.org:443'
