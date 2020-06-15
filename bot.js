@@ -1,73 +1,68 @@
+process.env["NTBA_FIX_319"] = 1;
 const TelegramBot = require('node-telegram-bot-api');
 const Iota = require('@iota/core');
-const token = 'your personal token here';
+const token = 'your token here';
 
 const iota = Iota.composeAPI({
-  provider: 'https://iotastrong.org:443'
+  provider: 'https://iotastrong.org/api'
 });
 
 // Create a bot that uses 'polling' to fetch new updates
 const bot = new TelegramBot(token, {polling: true});
 
-bot.onText(/\!milestone comnet/, (msg, match ) =>{
-  const chatId = msg.chat.id;
-  const resp = match[1]; // the captured "whatever"
-  const info =   iota.getNodeInfo()
-  // Convert the returned object to JSON to make the output more readable
-  .then(info => console.log(JSON.stringify(info, null, 1)))
-  .catch(err => {
-      // Catch any errors
-      console.log(err);
-  });
-  
-  // send back the matched "whatever" to the chat
-  bot.sendMessage(chatId, "Milestone: " + info )  
-
-});
-
-
-bot.onText(/\/milestone/, (msg, match ) =>{
-  const chatId = msg.chat.id;
-  const resp = match[1]; // the captured "whatever"
-  const info =   iota.getNodeInfo()
-  // Convert the returned object to JSON to make the output more readable
-  .then(info => console.log(JSON.stringify(info, null, 1)))
-  .catch(err => {
-      // Catch any errors
-      console.log(err);
-  });
-  
-  // send back the matched "whatever" to the chat
-  bot.sendMessage(chatId, "Milestone: " + info )  
-
-});
 bot.onText(/\/start/, (msg, match) =>{
   const chatId = msg.chat.id;
   const resp = match[1]; // the captured "whatever"
 
   // send back the matched "whatever" to the chat
-  bot.sendMessage(chatId, "Hi Friend! i can show you the latest milestoneIndex in the IOTA comnet, if you want. Simply type /milestone!")
+  bot.sendMessage(chatId, "Hi Friend! i can show you the latest milestoneIndex on the IOTA comnet, if you want. Simply type /LMI_comnet!")
 });
-// Matches "/echo [whatever]"
-bot.onText(/\/echo (.+)/, (msg, match) => {
-  // 'msg' is the received Message from Telegram
-  // 'match' is the result of executing the regexp above on the text content
-  // of the message
 
+bot.onText(/\/LMI_comnet/, (msg, match ) =>{
   const chatId = msg.chat.id;
   const resp = match[1]; // the captured "whatever"
+  const info =   iota.getNodeInfo()
+  // Convert the returned object to JSON to make the output more readable
+  .then(info => bot.sendMessage(chatId, "LMI: " + JSON.stringify(info ['latestMilestoneIndex'], null, 1)))
+  .catch(err => {console.log(err);});
   
-  // send back the matched "whatever" to the chat
-  bot.sendMessage(chatId, resp);
+});
+bot.onText(/\!milestone comnet/, (msg, match ) =>{
+  const chatId = msg.chat.id;
+  const resp = match[1]; // the captured "whatever"
+  const info =   iota.getNodeInfo()
+  // Convert the returned object to JSON to make the output more readable
+  .then(info => bot.sendMessage(chatId, "LMI: " + JSON.stringify(info ['latestMilestoneIndex'], null, 1)))
+  .catch(err => {console.log(err);});
+  
+});
+bot.onText(/\/appVersion/, (msg, match ) =>{
+  const chatId = msg.chat.id;
+  const resp = match[1]; // the captured "whatever"
+  const info =   iota.getNodeInfo()
+  // Convert the returned object to JSON to make the output more readable
+  .then(info => bot.sendMessage(chatId, "HORNET: " + JSON.stringify(info ['appVersion'], null, 1)))
+  .catch(err => {console.log(err);});
+  
+});
+bot.onText(/\/latestMilestone_comnet/, (msg, match ) =>{
+  const chatId = msg.chat.id;
+  const resp = match[1]; // the captured "whatever"
+  const info =   iota.getNodeInfo()
+  // Convert the returned object to JSON to make the output more readable
+  .then(info => bot.sendMessage(chatId, "Latest Milestone: " + JSON.stringify(info ['latestMilestone'], null, 1)))
+  .catch(err => {console.log(err);});
+  
+});
+bot.onText(/\/help/, (msg, match ) =>{
+  const chatId = msg.chat.id;
+  const resp = match[1]; // the captured "whatever"
+  const info =   iota.getNodeInfo()
+  // Convert the returned object to JSON to make the output more readable
+  .then(info => bot.sendMessage(chatId, 
+    "/LMI_comnet - Show latest LMI on comnet \r\n /latestMilestone_comnet - show the latest Milestone on comnet \r\n /appVersion - show the installed Node Software"))
+  .catch(err => {console.log(err);});
+  
 });
 
-
-// Listen for any kind of message. There are different kinds of
-// messages.
-/*bot.on('message', (msg) => {
-  const chatId = msg.chat.id;
-
-  // send a message to the chat acknowledging receipt of their message
-  bot.sendMessage(chatId, 'this bot is currently offline');
-});*/
 bot.on("polling_error", (err) => console.log(err));
